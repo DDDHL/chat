@@ -2,9 +2,13 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    test: '测试',
+    isLoading: true,
   },
-  mutations: {},
+  mutations: {
+    contraLoading(state, payload) {
+      state.isLoading = payload
+    },
+  },
   actions: {},
   modules: {},
 })

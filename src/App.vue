@@ -1,20 +1,28 @@
 <template>
-  <router-view></router-view>
+  <Loading v-show="store.state.isLoading" />
+  <router-view v-show="!store.state.isLoading"></router-view>
 </template>
 
 <script>
-export default {
-  name: 'App',
-}
+  import { useStore } from 'vuex'
+  import Loading from '@/components/Loading.vue'
+  export default {
+    name: 'App',
+    components: {
+      Loading
+    },
+    setup() {
+      const store = useStore()
+      setTimeout(() => {
+        store.commit('contraLoading',false)
+      }, 2000);
+      return {
+        store
+      }
+    }
+  }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="scss">
+
 </style>

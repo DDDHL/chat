@@ -3,11 +3,11 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 const routes = [
   {
     path: '/',
-    component: () => import('@/components/HelloWorld'),
+    component: () => import('@/pages/UserLogin'),
   },
   {
-    path: '/test',
-    component: () => import('@/components/TestCom'),
+    path: '/userLogin',
+    component: () => import('@/pages/SystemIndex'),
   },
 ]
 export const router = createRouter({
