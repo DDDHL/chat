@@ -1,5 +1,9 @@
-# Vue3 模板
+# 仿微信聊天桌面应用
 
-## 插件
+## 所用技术
+
+Vue3 + element-Plus + electron
+
+<br/>
 
 vuex、router、scss
