@@ -6,6 +6,9 @@ module.exports = defineConfig({
   transpileDependencies: true,
   publicPath: './',
   configureWebpack: {
+    externals: {
+      electron: 'require("electron")',
+    },
     plugins: [
       AutoImport({
         resolvers: [ElementPlusResolver()],

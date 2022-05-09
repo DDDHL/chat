@@ -1,8 +1,7 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
-
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // 在入口文件对的顶部配置热加载
@@ -15,16 +14,20 @@ try {
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
 ])
-
+var win
 async function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+  win = new BrowserWindow({
+    width: 958,
+    height: 589,
     frame: false,
-    webPreferences: {
+    /* webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+    }, */
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
     },
   })
 
@@ -43,12 +46,35 @@ app.on('window-all-closed', () => {
   }
 })
 
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow()
 })
 
 app.on('ready', async () => {
   createWindow()
+})
+
+// 退出程序
+ipcMain.on('window-close', function () {
+  app.exit()
+})
+// 最小化
+ipcMain.on('window-minimize', function () {
+  win.minimize()
+})
+// 全屏
+ipcMain.on('window-maximize', function () {
+  if (win.isMaximized()) {
+    win.restore()
+  } else {
+    win.maximize()
+  }
 })
 
 if (isDevelopment) {
