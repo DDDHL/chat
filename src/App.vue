@@ -5,26 +5,34 @@
 </template>
 
 <script>
-  import { useStore } from 'vuex'
-  import Loading from '@/components/Loading.vue'
-  import Top from '@/components/Top.vue'
-  export default {
-    name: 'App',
-    components: {
-      Loading,Top
-    },
-    setup() {
-      const store = useStore()
-      setTimeout(() => {
-        store.commit('contraLoading',false)
-      }, 2000);
-      return {
-        store
-      }
+import { useStore } from 'vuex'
+import Loading from '@/components/Loading.vue'
+import Top from '@/components/Top.vue'
+export default {
+  name: 'App',
+  components: {
+    Loading, Top
+  },
+  setup() {
+    const store = useStore()
+    setTimeout(() => {
+      store.commit('contraLoading', false)
+    }, 2000);
+    return {
+      store
     }
   }
+}
 </script>
 
 <style lang="scss">
-
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+#app {
+  width: 100%;
+  height: 100%;
+}
 </style>

@@ -37,7 +37,6 @@ export default {
       ipcRenderer.send('window-minimize')
     },
     close() {
-      console.log(88)
       ipcRenderer.send('window-close')
     }
   },

@@ -6,7 +6,7 @@ const routes = [
     component: () => import('@/pages/UserLogin'),
   },
   {
-    path: '/userLogin',
+    path: '/index',
     component: () => import('@/pages/SystemIndex'),
   },
 ]
