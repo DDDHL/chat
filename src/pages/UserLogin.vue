@@ -48,6 +48,8 @@ import logoUrl from '@/assets/img/logo.png'
 import { ref } from '@vue/reactivity'
 import { ElMessage } from 'element-plus'
 import { encrypt } from '@/utils/secret'
+import { userLogin } from '@/api'
+import router from '@/router'
 export default {
   name: 'UserLogin',
   setup() {
@@ -65,7 +67,16 @@ export default {
         message('请输入密码', 'error')
         return
       }
-      console.log(encrypt(password.value))
+      userLogin({ account: account.value, password: encrypt(password.value) }, { auth: true }).then(res => {
+        message('登录成功', 'success')
+        window.sessionStorage.setItem('token', res.data.token)
+        window.sessionStorage.setItem('user', res.data.info)
+        setTimeout(() => {
+          router.push('index')
+        }, 1000)
+      }).catch(err => {
+        message(err, 'error')
+      })
     }
     // 注册用户
     function regUser() {
