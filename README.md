@@ -6,4 +6,6 @@ Vue3 + element-Plus + electron
 
 <br/>
 
-vuex、router、scss
+axios、crypto-js、scss、vue-router、vuex
+
+<br/>

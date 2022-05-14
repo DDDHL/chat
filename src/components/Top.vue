@@ -28,26 +28,32 @@ export default {
     Minus,
     FullScreen,
   },
-  methods: {
-    maximize() {
+  setup() {
+    function maximize() {
       this.fullscreen = true
       ipcRenderer.send('window-maximize')
-    },
-    minimize() {
+    }
+    function minimize() {
       ipcRenderer.send('window-minimize')
-    },
-    close() {
+    }
+    function close() {
       ipcRenderer.send('window-close')
+    }
+    return {
+      maximize, minimize, close
     }
   },
 }
 </script>
 
 <style lang="scss" scoped>
+$topBg: #fff;
 .bg {
+  background-color: $topBg !important;
+  background-image: none !important;
   -webkit-app-region: drag;
   width: 100%;
-  height: 30px;
+  height: 30px !important;
   & > div {
     display: flex;
     justify-content: center;
@@ -61,7 +67,7 @@ export default {
   width: 30px;
   height: 30px;
   float: right;
-  background-color: #fff;
+  background-color: $topBg;
   -webkit-app-region: no-drag;
   -webkit-user-select: none;
 }

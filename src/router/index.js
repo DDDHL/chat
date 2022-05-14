@@ -9,6 +9,10 @@ const routes = [
     path: '/index',
     component: () => import('@/pages/SystemIndex'),
   },
+  {
+    path: '/chatPerson',
+    component: () => import('@/components/ChatPerson'),
+  },
 ]
 export const router = createRouter({
   history: createWebHashHistory(),

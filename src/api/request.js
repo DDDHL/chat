@@ -11,7 +11,8 @@ const requests = axios.create({
 requests.interceptors.request.use((config) => {
   if (config.config.auth) {
     // 请求带token
-    config.headers.Authorization = window.sessionStorage.getItem('token')
+    config.headers.Authorization =
+      'Bearer ' + window.sessionStorage.getItem('token') || 'Bearer '
   }
   return config
 })
@@ -20,7 +21,7 @@ requests.interceptors.request.use((config) => {
 requests.interceptors.response.use(
   (res) => {
     // 请求成功的回调函数
-    if (res.data.code == '1001' || res.data.code == '1002') {
+    if (res.data.code) {
       return Promise.reject(res.data.message)
     }
     return Promise.resolve(res.data)
