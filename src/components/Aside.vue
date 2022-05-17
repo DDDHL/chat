@@ -13,29 +13,29 @@
         style="height: calc(100% - 80px)"
         router
       >
-        <el-menu-item index="/chatPerson">
+        <el-menu-item index="/userList">
           <el-icon :size="20">
             <ChatDotSquare />
           </el-icon>
-          <template #title>Navigator Two</template>
+          <template #title>聊天区</template>
         </el-menu-item>
         <el-menu-item index="/chatPerson">
           <el-icon :size="20">
             <UserFilled />
           </el-icon>
-          <template #title>Navigator Two</template>
+          <template #title>好友列表</template>
         </el-menu-item>
         <el-menu-item index="/chatPerson">
           <el-icon :size="20">
             <Compass />
           </el-icon>
-          <template #title>Navigator Two</template>
+          <template #title>微社区</template>
         </el-menu-item>
         <el-menu-item index="/chatPerson">
           <el-icon :size="20">
             <Setting />
           </el-icon>
-          <template #title>Navigator Two</template>
+          <template #title>设置</template>
         </el-menu-item>
       </el-menu>
     </div>

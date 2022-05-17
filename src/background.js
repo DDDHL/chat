@@ -20,6 +20,8 @@ async function createWindow() {
   win = new BrowserWindow({
     width: 958,
     height: 589,
+    minWidth: 700,
+    minHeight: 500,
     frame: false,
     /* webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,

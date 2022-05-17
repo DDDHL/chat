@@ -8,10 +8,17 @@ const routes = [
   {
     path: '/index',
     component: () => import('@/pages/SystemIndex'),
-  },
-  {
-    path: '/chatPerson',
-    component: () => import('@/components/ChatPerson'),
+    redirect: '/userList',
+    children: [
+      {
+        path: '/userList',
+        component: () => import('@/components/UserList'),
+      },
+      {
+        path: '/chatPerson',
+        component: () => import('@/components/ChatPerson'),
+      },
+    ],
   },
 ]
 export const router = createRouter({
