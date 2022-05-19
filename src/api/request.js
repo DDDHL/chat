@@ -1,9 +1,9 @@
 // 引入 axios
 import axios from 'axios'
-
+import store from '@/store'
 const requests = axios.create({
   // 配置基础路径
-  baseURL: 'http://localhost:7777',
+  baseURL: store.state.ip,
   timeout: 3000,
 })
 

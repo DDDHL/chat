@@ -7,7 +7,8 @@
     </div>
     <div class="top max" @click="maximize">
       <el-icon :size="20">
-        <FullScreen />
+        <FullScreen v-show="!isFullscreen" />
+        <CopyDocument v-show="isFullscreen" />
       </el-icon>
     </div>
     <div class="top min" @click="minimize">
@@ -19,7 +20,8 @@
 </template>
 
 <script>
-import { Close, Minus, FullScreen } from '@element-plus/icons'
+import { Close, Minus, FullScreen, CopyDocument } from '@element-plus/icons'
+import { ref } from '@vue/reactivity'
 const { ipcRenderer } = require('electron')
 export default {
   name: 'sysTop',
@@ -27,10 +29,12 @@ export default {
     Close,
     Minus,
     FullScreen,
+    CopyDocument
   },
   setup() {
+    var isFullscreen = ref(false)
     function maximize() {
-      this.fullscreen = true
+      isFullscreen.value = !isFullscreen.value
       ipcRenderer.send('window-maximize')
     }
     function minimize() {
@@ -40,14 +44,14 @@ export default {
       ipcRenderer.send('window-close')
     }
     return {
-      maximize, minimize, close
+      maximize, minimize, close, CopyDocument, isFullscreen
     }
   },
 }
 </script>
 
 <style lang="scss" scoped>
-$topBg: #fff;
+$topBg: #f5f5f5;
 .bg {
   background-color: $topBg !important;
   background-image: none !important;
@@ -68,7 +72,7 @@ $topBg: #fff;
   height: 30px;
   float: right;
   background-color: $topBg;
-  -webkit-app-region: no-drag;
+  -webkit-app-region: no-drag !important;
   -webkit-user-select: none;
 }
 </style>

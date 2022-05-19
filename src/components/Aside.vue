@@ -13,7 +13,7 @@
         style="height: calc(100% - 80px)"
         router
       >
-        <el-menu-item index="/userList">
+        <el-menu-item index="/leftCenter">
           <el-icon :size="20">
             <ChatDotSquare />
           </el-icon>
@@ -44,13 +44,14 @@
 
 <script>
 import { ChatDotSquare, UserFilled, Setting, Compass } from '@element-plus/icons'
-import circleUrl from '@/assets/img/head.jpg'
+
 export default {
   name: 'sysAside',
   components: {
     ChatDotSquare, UserFilled, Setting, Compass
   },
   setup() {
+    var circleUrl = JSON.parse(window.sessionStorage.getItem('user')).avatar
     return {
       circleUrl
     }
@@ -63,6 +64,7 @@ export default {
   width: 100%;
   height: 100%;
   display: flex;
+  user-select: none;
 }
 .head {
   height: 45px;
@@ -74,8 +76,13 @@ export default {
   padding-top: 35px;
 }
 :deep(.el-avatar.el-avatar--square > img) {
-  image-rendering: -webkit-optimize-contrast;
+  image-rendering: -moz-crisp-edges; /* Firefox */
+  image-rendering: -o-crisp-edges; /* Opera */
+  image-rendering: -webkit-optimize-contrast; /* Webkit (non-standard naming) */
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
 }
+
 .right {
   width: 250px;
   border-right: 1px solid #eee;

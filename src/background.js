@@ -62,6 +62,15 @@ app.on('ready', async () => {
   createWindow()
 })
 
+app.on('maximize', () => {
+  console.log('最大')
+  //win.webContents.send('mainWin-max', true)
+})
+app.on('unmaximize', () => {
+  console.log('最小')
+  //win.webContents.send('mainWin-max', false)
+})
+
 // 退出程序
 ipcMain.on('window-close', function () {
   app.exit()

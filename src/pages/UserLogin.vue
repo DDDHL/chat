@@ -6,7 +6,7 @@
         <!-- 登录模块 -->
         <div class="box box2" :style="turnBox">
           <el-image style="width: 100px; height: 100px" :src="logoUrl" />
-          <div class="title">新华的湖</div>
+          <div class="title">微聊</div>
           <div>
             <el-input
               v-model="account"

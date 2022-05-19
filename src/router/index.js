@@ -8,11 +8,17 @@ const routes = [
   {
     path: '/index',
     component: () => import('@/pages/SystemIndex'),
-    redirect: '/userList',
+    redirect: '/leftCenter',
     children: [
       {
-        path: '/userList',
-        component: () => import('@/components/UserList'),
+        path: '/leftCenter',
+        component: () => import('@/components/LeftCenter'),
+        children: [
+          {
+            path: '/chatFrame',
+            component: () => import('@/components/ChatFrame'),
+          },
+        ],
       },
       {
         path: '/chatPerson',
