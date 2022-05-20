@@ -89,13 +89,12 @@ export default {
         return
       }
       userLogin(
-        { account: account.value, password: encrypt(password.value) },
-        { auth: true }
+        { account: account.value, password: encrypt(password.value) }
       )
         .then((res) => {
           message(res.message, 'success')
           window.sessionStorage.setItem('token', res.data.token)
-          window.sessionStorage.setItem('user', JSON.stringify(res.data.info))
+          window.sessionStorage.setItem('user', JSON.stringify(res.data.info[0]))
           setTimeout(() => {
             router.push('index')
           }, 1000)

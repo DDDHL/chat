@@ -8,19 +8,79 @@
         placeholder="搜索"
         :prefix-icon="Search"
       />
-      <el-button :icon="Plus" />
+      <el-button :icon="Plus" @click="dialogVisible = true" />
     </div>
   </div>
+  <el-dialog v-model="dialogVisible" title="添加好友" width="350px" center>
+    <div>
+      <el-input
+        v-model="searchParams"
+        class="w-50 m-2"
+        placeholder="搜索账户或名字"
+        :prefix-icon="Search"
+        @keydown.enter="searchPeople"
+        clearable
+      />
+    </div>
+    <div class="userList_fa">
+      <div class="userList" v-for="item in userList.data" :key="item">
+        <div>
+          <el-image class="headAvatar" :src="item.avatar" fit="cover" />
+        </div>
+        <div class="head">
+          <div>{{ item.name }}</div>
+          <div>{{ item.signature }}</div>
+        </div>
+        <div v-if="item.sex == '男'">
+          <el-icon size="18px" :color="'#46A3FF'">
+            <Female />
+          </el-icon>
+        </div>
+        <div v-else>
+          <el-icon size="18px" color="#FF79BC">
+            <Male />
+          </el-icon>
+        </div>
+        <div style="margin-right: 10px">
+          <el-button :icon="Plus" />
+        </div>
+      </div>
+    </div>
+  </el-dialog>
 </template>
 
 <script>
-import { Search, Plus } from '@element-plus/icons'
-import { ref } from '@vue/reactivity'
+import { Search, Plus, Female, Male } from '@element-plus/icons'
+import { reactive, ref } from '@vue/reactivity'
+import { searchFriends } from '@/api'
+import { ElMessage } from 'element-plus'
 export default {
+  components: {
+    Female, Male
+  },
   setup() {
     var searchInfo = ref()
+    var searchParams = ref()
+    var dialogVisible = ref(false)
+    var userList = reactive({ data: [] })
+    function searchPeople() {
+      if (searchParams.value == undefined) {
+        return
+      }
+      searchFriends(searchParams.value, { auth: true }).then(res => {
+        if (res.data.length == 0) {
+          ElMessage({
+            message: '没有此用户哦~',
+            center: true,
+            type: 'warning',
+            duration: 1000,
+          })
+        }
+        userList.data = res.data
+      })
+    }
     return {
-      Search, Plus, searchInfo
+      Search, Plus, searchInfo, dialogVisible, searchPeople, searchParams, userList
     }
   }
 }
@@ -59,5 +119,60 @@ export default {
       height: 30px;
     }
   }
+}
+.userList_fa {
+  height: 300px;
+  overflow: auto;
+}
+.userList {
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .el-button {
+    width: 35px;
+    height: 35px;
+  }
+  .head {
+    display: flex;
+    flex-direction: column;
+    height: 55px;
+    width: 150px;
+    div:nth-child(1) {
+      font-size: 16px;
+    }
+    div:nth-child(2) {
+      margin-top: 10px;
+      color: #a7a6a6;
+    }
+    div {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+.headAvatar {
+  width: 55px;
+  height: 55px;
+  border: 1px solid #d6d6d6;
+  image-rendering: -webkit-optimize-contrast;
+}
+/* 整个滚动条 */
+.userList_fa::-webkit-scrollbar {
+  width: 6px;
+}
+.userList_fa:hover::-webkit-scrollbar {
+  width: 6px;
+}
+/* 滚动条上的滚动滑块 */
+.userList_fa::-webkit-scrollbar-thumb {
+  background-color: #adacaa;
+  border-radius: 32px;
+}
+/* 滚动条轨道 */
+.userList_fa::-webkit-scrollbar-track {
+  background-color: #dcdcdd;
+  border-radius: 32px;
 }
 </style>

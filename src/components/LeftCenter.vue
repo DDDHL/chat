@@ -13,15 +13,15 @@
                 : 'list_item notActiveClass'
             "
             @click="changeBg(item)"
-            v-for="item in allUsers"
+            v-for="item in allUsers.data"
             :key="item.id"
           >
             <div class="headImg">
               <el-avatar
                 shape="square"
                 :size="40"
-                fit="fit"
-                :src="userListAvatar"
+                fit="cover"
+                :src="item.avatar"
               />
             </div>
             <div class="text">
@@ -39,11 +39,11 @@
         </el-header>
         <el-main>
           <div class="chatTitle" v-show="!logo">
-            <div @click="checkPeople">啊实打实大苏打</div>
+            <div @click="checkPeople">{{ peopleName }}</div>
           </div>
           <div class="grayLogo" v-show="logo">
             <el-image
-              style="width: 120px; height: 120px"
+              style="width: 120px; height: 120px; -webkit-user-select: none"
               :src="grayLogoUrl"
               fit="fill"
             />
@@ -56,31 +56,29 @@
 </template>
 
 <script>
-import { ref } from '@vue/reactivity'
+import { reactive, ref } from '@vue/reactivity'
 import LeftCenterSearch from './LeftCenterSearch.vue'
 import grayLogoUrl from '@/assets/img/icon.png'
+import { useStore } from 'vuex'
 import router from '@/router'
+import { getFriendsList } from '@/api'
 export default {
   components: { LeftCenterSearch },
   setup() {
     var activeItem = ref()
     var logo = ref(true)
-    var allUsers = [
-      { id: '1', name: 'DDDHL' },
-      { id: '2', name: '八本' },
-      { id: '3', name: '幸福一家人' },
-      { id: '4', name: '老八美食探讨群123456' },
-      { id: '5', name: '卢本伟广场' },
-      { id: '6', name: '前端工程师探讨' },
-      { id: '7', name: '你好明天~' },
-      { id: '8', name: '网抑云' },
-      { id: '9', name: '微聊客服群' },
-      { id: '10', name: '招聘会' },
-      { id: '11', name: 'LOL开黑群' },
-      { id: '12', name: '19软工通知群1111111111' },
-    ]
+    var peopleName = ref()
+    var allUsers = reactive({ data: [] })
+    const store = useStore()
+    getFriendsList({ account: JSON.parse(window.sessionStorage.getItem('user')).account }, { auth: true }).then(res => {
+      //console.log(res.data)
+      allUsers.data = res.data
+      console.log(allUsers)
+    })
     function changeBg(item) {
       activeItem.value = item.id
+      peopleName.value = item.name
+      store.state.nowPeople = item.id
       router.push('chatFrame')
       logo.value = false
     }
@@ -89,7 +87,7 @@ export default {
     }
     var userListAvatar = JSON.parse(window.sessionStorage.getItem('user')).avatar
     return {
-      userListAvatar, activeItem, allUsers, grayLogoUrl, logo, changeBg, checkPeople
+      userListAvatar, activeItem, allUsers, grayLogoUrl, logo, peopleName, changeBg, checkPeople
     }
   }
 }
@@ -120,6 +118,7 @@ export default {
   height: calc(100% - 60px);
   box-sizing: border-box;
   border-right: 1px solid #d6d6d6;
+  //overflow-y: overlay;
   overflow-y: scroll;
   .list_item {
     user-select: none;
@@ -181,7 +180,6 @@ export default {
   align-items: center;
   height: 100%;
   width: 100%;
-  -webkit-app-region: drag;
 }
 .headDrag {
   -webkit-app-region: drag;
@@ -194,11 +192,7 @@ export default {
   background-color: #dcdcdd;
 }
 :deep(.el-avatar.el-avatar--square > img) {
-  image-rendering: -moz-crisp-edges; /* Firefox */
-  image-rendering: -o-crisp-edges; /* Opera */
-  image-rendering: -webkit-optimize-contrast; /* Webkit (non-standard naming) */
-  image-rendering: crisp-edges;
-  -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+  image-rendering: -webkit-optimize-contrast;
 }
 /* 整个滚动条 */
 .list::-webkit-scrollbar {

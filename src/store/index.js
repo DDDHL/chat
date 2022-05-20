@@ -4,6 +4,7 @@ export default createStore({
   state: {
     ip: 'http://localhost:7777',
     isLoading: true,
+    nowPeople: '',
   },
   mutations: {
     contraLoading(state, payload) {
