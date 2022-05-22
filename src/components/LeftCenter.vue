@@ -3,7 +3,7 @@
     <el-container style="height: 100%">
       <el-aside width="250px">
         <!-- 顶部搜索框 -->
-        <leftCenterSearch />
+        <leftCenterSearch @updateData="getData" />
         <!-- 下方用户列表 -->
         <div class="list">
           <div
@@ -39,7 +39,7 @@
         </el-header>
         <el-main>
           <div class="chatTitle" v-show="!logo">
-            <div @click="checkPeople">{{ peopleName }}</div>
+            <div @click="checkPeople(peopleName)">{{ peopleName }}</div>
           </div>
           <div class="grayLogo" v-show="logo">
             <el-image
@@ -62,6 +62,7 @@ import grayLogoUrl from '@/assets/img/icon.png'
 import { useStore } from 'vuex'
 import router from '@/router'
 import { getFriendsList } from '@/api'
+import { onMounted } from '@vue/runtime-core'
 export default {
   components: { LeftCenterSearch },
   setup() {
@@ -70,24 +71,27 @@ export default {
     var peopleName = ref()
     var allUsers = reactive({ data: [] })
     const store = useStore()
-    getFriendsList({ account: JSON.parse(window.sessionStorage.getItem('user')).account }, { auth: true }).then(res => {
-      //console.log(res.data)
-      allUsers.data = res.data
-      console.log(allUsers)
+    onMounted(() => {
+      getData()
     })
+    function getData() {
+      getFriendsList({ account: JSON.parse(window.sessionStorage.getItem('user')).account }, { auth: true }).then(res => {
+        allUsers.data = res.data
+      })
+    }
     function changeBg(item) {
       activeItem.value = item.id
       peopleName.value = item.name
-      store.state.nowPeople = item.id
+      store.state.nowPeople = item
       router.push('chatFrame')
       logo.value = false
     }
-    function checkPeople() {
-      console.log(111)
+    function checkPeople(name) {
+      console.log(name)
     }
     var userListAvatar = JSON.parse(window.sessionStorage.getItem('user')).avatar
     return {
-      userListAvatar, activeItem, allUsers, grayLogoUrl, logo, peopleName, changeBg, checkPeople
+      userListAvatar, activeItem, allUsers, grayLogoUrl, logo, peopleName, changeBg, checkPeople, getData
     }
   }
 }
@@ -118,8 +122,7 @@ export default {
   height: calc(100% - 60px);
   box-sizing: border-box;
   border-right: 1px solid #d6d6d6;
-  //overflow-y: overlay;
-  overflow-y: scroll;
+  overflow-y: overlay;
   .list_item {
     user-select: none;
     display: flex;
@@ -180,6 +183,7 @@ export default {
   align-items: center;
   height: 100%;
   width: 100%;
+  margin-top: -35px;
 }
 .headDrag {
   -webkit-app-region: drag;

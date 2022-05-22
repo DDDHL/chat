@@ -20,6 +20,7 @@
         :prefix-icon="Search"
         @keydown.enter="searchPeople"
         clearable
+        @clear="userList.data = []"
       />
     </div>
     <div class="userList_fa">
@@ -42,7 +43,7 @@
           </el-icon>
         </div>
         <div style="margin-right: 10px">
-          <el-button :icon="Plus" />
+          <el-button :icon="Plus" @click="addFriend(item.account)" />
         </div>
       </div>
     </div>
@@ -52,35 +53,56 @@
 <script>
 import { Search, Plus, Female, Male } from '@element-plus/icons'
 import { reactive, ref } from '@vue/reactivity'
-import { searchFriends } from '@/api'
+import { searchFriends, addNewFriend } from '@/api'
 import { ElMessage } from 'element-plus'
 export default {
+  emits: ['updateData'],
   components: {
     Female, Male
   },
-  setup() {
+  setup(props, context) {
     var searchInfo = ref()
     var searchParams = ref()
     var dialogVisible = ref(false)
     var userList = reactive({ data: [] })
+    // 搜索用户（除自己和已加好友）
     function searchPeople() {
-      if (searchParams.value == undefined) {
+      if (searchParams.value == undefined || searchParams.value == '') {
+        userList.data = []
         return
       }
-      searchFriends(searchParams.value, { auth: true }).then(res => {
+      let account = JSON.parse(window.sessionStorage.getItem('user')).account
+      searchFriends({ account: account, params: searchParams.value }, { auth: true }).then(res => {
         if (res.data.length == 0) {
           ElMessage({
             message: '没有此用户哦~',
             center: true,
             type: 'warning',
-            duration: 1000,
+            duration: 2000,
           })
         }
         userList.data = res.data
       })
     }
+    // 添加用户
+    function addFriend(paramsAccount) {
+      addNewFriend({ account: JSON.parse(window.sessionStorage.getItem('user')).account, paramsAccount: paramsAccount }, { auth: true }).then(res => {
+        ElMessage({
+          message: res.message,
+          center: true,
+          type: 'success',
+          duration: 2000,
+        })
+        if (userList.data.length > 1) {
+          searchPeople()
+        } else {
+          userList.data = []
+        }
+        context.emit('updateData')
+      })
+    }
     return {
-      Search, Plus, searchInfo, dialogVisible, searchPeople, searchParams, userList
+      Search, Plus, searchInfo, dialogVisible, searchParams, userList, searchPeople, addFriend
     }
   }
 }

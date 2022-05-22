@@ -36,7 +36,17 @@ export const searchFriends = (params, config = {}) => {
   return requests({
     url: '/blurSearch',
     method: 'POST',
-    data: { params: params },
+    data: params,
+    config: config,
+  })
+}
+
+// 添加好友
+export const addNewFriend = (params, config = {}) => {
+  return requests({
+    url: '/addNewFriend',
+    method: 'POST',
+    data: params,
     config: config,
   })
 }
