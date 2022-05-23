@@ -1,22 +1,25 @@
 <template>
   <div class="bg">
     <div class="info" ref="root">
-      <div
-        v-for="item in allMsg.data"
-        :key="item"
-        :class="item.from == myAccount ? 'rightInfo' : 'leftInfo'"
-      >
-        <div class="leftHead">
-          <el-avatar
-            shape="square"
-            :size="35"
-            fit="cover"
-            :src="item.from == myAccount ? myHead : friendHead"
-          />
+      <div v-for="item in allMsg.data" :key="item" style="text-align: center">
+        <div class="createTime" v-if="item.createTime ? 'true' : false">
+          {{ item.createTime }}
         </div>
-        <div :class="item.from == myAccount ? 'rightArrow' : 'leftArrow'"></div>
-        <div :class="item.from == myAccount ? 'msg co' : 'msg'">
-          <div>{{ item.msg }}</div>
+        <div :class="item.fromUser == myAccount ? 'rightInfo' : 'leftInfo'">
+          <div class="leftHead">
+            <el-avatar
+              shape="square"
+              :size="35"
+              fit="cover"
+              :src="item.fromUser == myAccount ? myHead : friendHead"
+            />
+          </div>
+          <div
+            :class="item.fromUser == myAccount ? 'rightArrow' : 'leftArrow'"
+          ></div>
+          <div :class="item.fromUser == myAccount ? 'msg co' : 'msg'">
+            <div>{{ item.chatRecord }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -48,6 +51,8 @@
 import { useStore } from 'vuex'
 import { nextTick, reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
+import { getRecordBySingle } from "@/api"
+import { handleDate } from '@/utils/date'
 export default {
   setup() {
     const store = useStore()
@@ -57,16 +62,26 @@ export default {
     const tooltip = ref(false)
     const ws = new WebSocket("ws://localhost:4000/");
     const myHead = JSON.parse(window.sessionStorage.getItem("user")).avatar
-    const friendHead = ref()
+    const friendHead = ref(store.state.nowPeople.avatar)
     const myAccount = JSON.parse(window.sessionStorage.getItem("user")).account
+    const pageSize = ref(10)
     ws.onopen = function () {
       // 连接成功后发送信息
       ws.send(JSON.stringify({ state: 'connet', account: myAccount }))
+      getData(pageSize.value)
     }
     watch(() => store.state.nowPeople, (newValue) => {
       // 更改用户重新获取聊天记录
       friendHead.value = newValue.avatar
+      store.state.nowPeople = newValue
+      allMsg.data = []
+      getData(pageSize.value)
     });
+    function getData(pageSize) {
+      getRecordBySingle({ paramsAccount: store.state.nowPeople.account, pageSize: pageSize }, { auth: true }).then(res => {
+        allMsg.data = handleDate(res.data.reverse())
+      })
+    }
     function sendMsg() {
       if (inputInfo.value == '' || inputInfo.value == undefined) {
         tooltip.value = true
@@ -120,7 +135,8 @@ export default {
       myAccount,
       friendHead,
       root,
-      tooltip
+      tooltip,
+
     }
   }
 }
@@ -165,6 +181,17 @@ export default {
     }
   }
 }
+.createTime {
+  display: inline-block;
+  background-color: #dadada;
+  font-size: 12px;
+  border-radius: 4px;
+  height: 20px;
+  color: #fff;
+  line-height: 20px;
+  padding: 3px;
+  margin: 5px 0;
+}
 .rightArrow {
   width: 0;
   height: 0;
@@ -199,7 +226,7 @@ export default {
   width: 0;
 }
 .info:hover::-webkit-scrollbar {
-  width: 10px;
+  width: 7px;
 }
 /* 滚动条上的滚动滑块 */
 .info::-webkit-scrollbar-thumb {

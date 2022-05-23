@@ -22,11 +22,11 @@ export const userRegister = (params, config = {}) => {
 }
 
 // 获取用户好友列表
-export const getFriendsList = (params, config = {}) => {
+export const getFriendsList = (config = {}) => {
   return requests({
     url: '/getFriendList',
     method: 'POST',
-    data: params,
+    data: {},
     config: config,
   })
 }
@@ -45,6 +45,16 @@ export const searchFriends = (params, config = {}) => {
 export const addNewFriend = (params, config = {}) => {
   return requests({
     url: '/addNewFriend',
+    method: 'POST',
+    data: params,
+    config: config,
+  })
+}
+
+// 获取单人聊天记录
+export const getRecordBySingle = (params, config = {}) => {
+  return requests({
+    url: '/getChatRecordBySingle',
     method: 'POST',
     data: params,
     config: config,

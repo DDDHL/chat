@@ -75,8 +75,11 @@ export default {
       getData()
     })
     function getData() {
-      getFriendsList({ account: JSON.parse(window.sessionStorage.getItem('user')).account }, { auth: true }).then(res => {
+      getFriendsList({ auth: true }).then(res => {
         allUsers.data = res.data
+        if (res.data.length > 0) {
+          store.state.nowPeople = { avatar: res.data[0].avatar, account: res.data[0].account }
+        }
       })
     }
     function changeBg(item) {

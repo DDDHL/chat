@@ -71,8 +71,7 @@ export default {
         userList.data = []
         return
       }
-      let account = JSON.parse(window.sessionStorage.getItem('user')).account
-      searchFriends({ account: account, params: searchParams.value }, { auth: true }).then(res => {
+      searchFriends({ params: searchParams.value }, { auth: true }).then(res => {
         if (res.data.length == 0) {
           ElMessage({
             message: '没有此用户哦~',
@@ -86,7 +85,7 @@ export default {
     }
     // 添加用户
     function addFriend(paramsAccount) {
-      addNewFriend({ account: JSON.parse(window.sessionStorage.getItem('user')).account, paramsAccount: paramsAccount }, { auth: true }).then(res => {
+      addNewFriend({ paramsAccount: paramsAccount }, { auth: true }).then(res => {
         ElMessage({
           message: res.message,
           center: true,

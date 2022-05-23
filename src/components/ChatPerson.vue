@@ -41,7 +41,7 @@ export default {
   setup() {
     var searchInfo = ref()
     var allUsers = reactive({ data: [] })
-    getFriendsList({ account: JSON.parse(window.sessionStorage.getItem('user')).account }, { auth: true }).then(res => {
+    getFriendsList({ auth: false }).then(res => {
       //console.log(res.data)
       allUsers.data = res.data
       console.log(allUsers)

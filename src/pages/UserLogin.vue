@@ -99,9 +99,6 @@ export default {
             router.push('index')
           }, 1000)
         })
-        .catch((err) => {
-          message(err, 'error')
-        })
     }
 
     // 注册用户
@@ -114,8 +111,6 @@ export default {
         setTimeout(() => {
           turnBack()
         }, 1000)
-      }).catch(err => {
-        message(err, 'error')
       })
     }
 
