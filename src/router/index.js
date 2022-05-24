@@ -24,6 +24,10 @@ const routes = [
         path: '/chatPerson',
         component: () => import('@/components/ChatPerson'),
       },
+      {
+        path: '/SystemSetting',
+        component: () => import('@/components/SystemSetting'),
+      },
     ],
   },
 ]

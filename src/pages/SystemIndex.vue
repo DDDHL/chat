@@ -2,7 +2,9 @@
   <div class="bg">
     <div class="index">
       <div class="index_item1"><Aside /></div>
-      <div class="index_item2"><router-view></router-view></div>
+      <div class="index_item2">
+        <router-view></router-view>
+      </div>
     </div>
   </div>
 </template>

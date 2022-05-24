@@ -31,7 +31,7 @@
           </el-icon>
           <template #title>微社区</template>
         </el-menu-item>
-        <el-menu-item index="/chatPerson">
+        <el-menu-item index="/SystemSetting">
           <el-icon :size="20">
             <Setting />
           </el-icon>
@@ -76,11 +76,8 @@ export default {
   padding-top: 35px;
 }
 :deep(.el-avatar.el-avatar--square > img) {
-  image-rendering: -moz-crisp-edges; /* Firefox */
-  image-rendering: -o-crisp-edges; /* Opera */
   image-rendering: -webkit-optimize-contrast; /* Webkit (non-standard naming) */
   image-rendering: crisp-edges;
-  -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
 }
 
 .right {

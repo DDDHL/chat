@@ -142,7 +142,7 @@ export default {
   }
 }
 .userList_fa {
-  height: 300px;
+  height: 234px;
   overflow: auto;
 }
 .userList {

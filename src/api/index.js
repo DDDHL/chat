@@ -60,3 +60,21 @@ export const getRecordBySingle = (params, config = {}) => {
     config: config,
   })
 }
+// 修改个人信息
+export const changeInfo = (params, config = {}) => {
+  return requests({
+    url: '/changeInfo',
+    method: 'POST',
+    data: params,
+    config: config,
+  })
+}
+
+// 退出登录
+export const userLogOut = (config = {}) => {
+  return requests({
+    url: '/logout',
+    method: 'POST',
+    config: config,
+  })
+}

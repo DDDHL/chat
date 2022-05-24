@@ -26,9 +26,9 @@
             </div>
             <div class="text">
               <div>{{ item.name }}</div>
-              <div>你好啊啊啊啊啊aaaaa</div>
+              <div>{{ item.newRecord }}</div>
             </div>
-            <div class="time">13:06</div>
+            <div class="time">{{ newRecordTime(item.newRecordTime) }}</div>
           </div>
         </div>
       </el-aside>
@@ -48,7 +48,7 @@
               fit="fill"
             />
           </div>
-          <router-view v-show="!logo"></router-view>
+          <router-view v-show="!logo" @updateData="getData"></router-view>
         </el-main>
       </el-container>
     </el-container>
@@ -63,6 +63,7 @@ import { useStore } from 'vuex'
 import router from '@/router'
 import { getFriendsList } from '@/api'
 import { onMounted } from '@vue/runtime-core'
+import { handleNewRecordTime } from '@/utils/date'
 export default {
   components: { LeftCenterSearch },
   setup() {
@@ -92,9 +93,13 @@ export default {
     function checkPeople(name) {
       console.log(name)
     }
+    function newRecordTime(time) {
+
+      return handleNewRecordTime(time)
+    }
     var userListAvatar = JSON.parse(window.sessionStorage.getItem('user')).avatar
     return {
-      userListAvatar, activeItem, allUsers, grayLogoUrl, logo, peopleName, changeBg, checkPeople, getData
+      userListAvatar, activeItem, allUsers, grayLogoUrl, logo, peopleName, changeBg, checkPeople, getData, newRecordTime
     }
   }
 }
@@ -139,7 +144,7 @@ export default {
       margin-left: 10px;
       display: flex;
       flex-direction: column;
-      width: 136px;
+      width: 128px;
       > div {
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -161,11 +166,16 @@ export default {
       font-size: 13px;
       color: #999999;
       margin-top: -35px;
+      width: 50px;
+      text-align: right;
     }
     &:hover {
       background-color: #d2d1d1;
     }
   }
+}
+.el-avatar > img {
+  image-rendering: -webkit-optimize-contrast;
 }
 .chatTitle {
   height: 40px;

@@ -1,6 +1,7 @@
 <template>
   <div class="bg">
     <div class="info" ref="root">
+      <div class="more" v-show="hasMore" @click="watchMore">查看更多消息</div>
       <div v-for="item in allMsg.data" :key="item" style="text-align: center">
         <div class="createTime" v-if="item.createTime ? 'true' : false">
           {{ item.createTime }}
@@ -52,36 +53,59 @@ import { useStore } from 'vuex'
 import { nextTick, reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getRecordBySingle } from "@/api"
-import { handleDate } from '@/utils/date'
+import { handleDate, handleDateSingle } from '@/utils/date'
 export default {
+
   setup() {
     const store = useStore()
     const inputInfo = ref()
     const root = ref(null)
     const allMsg = reactive({ data: [] })
     const tooltip = ref(false)
-    const ws = new WebSocket("ws://localhost:4000/");
+    const ws = new WebSocket(store.state.chatIp);
     const myHead = JSON.parse(window.sessionStorage.getItem("user")).avatar
     const friendHead = ref(store.state.nowPeople.avatar)
     const myAccount = JSON.parse(window.sessionStorage.getItem("user")).account
+    const myToken = window.sessionStorage.getItem('token')
     const pageSize = ref(10)
+    const hasMore = ref(true)
+    const lastLength = ref(10)
     ws.onopen = function () {
       // 连接成功后发送信息
-      ws.send(JSON.stringify({ state: 'connet', account: myAccount }))
-      getData(pageSize.value)
+      ws.send(JSON.stringify({ state: 'connet', account: myAccount, token: myToken }))
     }
     watch(() => store.state.nowPeople, (newValue) => {
       // 更改用户重新获取聊天记录
+      hasMore.value = true
       friendHead.value = newValue.avatar
       store.state.nowPeople = newValue
       allMsg.data = []
       getData(pageSize.value)
-    });
-    function getData(pageSize) {
-      getRecordBySingle({ paramsAccount: store.state.nowPeople.account, pageSize: pageSize }, { auth: true }).then(res => {
-        allMsg.data = handleDate(res.data.reverse())
-      })
+    }, { immediate: true });
+    // 获取聊天记录
+    function getData(pageSize, length = 0) {
+      setTimeout(() => {
+        getRecordBySingle({ paramsAccount: store.state.nowPeople.account, pageSize: pageSize }, { auth: true }).then(res => {
+          if (res.data.length == lastLength.value) {
+            hasMore.value = false
+          } else {
+            hasMore.value = true
+          }
+          lastLength.value = res.data.length
+          allMsg.data = handleDate(res.data.reverse())
+          nextTick(() => {
+            root.value.scrollTop = root.value.scrollHeight - length
+          })
+        })
+      }, 0)
     }
+    // 查看更多消息
+    function watchMore() {
+      let length = root.value.scrollHeight
+      pageSize.value = pageSize.value + 10
+      getData(pageSize.value, length)
+    }
+    // 发送信息
     function sendMsg() {
       if (inputInfo.value == '' || inputInfo.value == undefined) {
         tooltip.value = true
@@ -104,7 +128,12 @@ export default {
     ws.onmessage = function (e) {
       // 接收服务端信息
       let data = JSON.parse(e.data)
-      allMsg.data.push(data)
+      if (allMsg.data.length > 0) {
+        allMsg.data.push(handleDateSingle(allMsg.data[allMsg.data.length - 1], data))
+      } else {
+        allMsg.data.push(data)
+      }
+      console.log(data)
       nextTick(() => {
         root.value.scrollTop = root.value.scrollHeight
       })
@@ -136,7 +165,8 @@ export default {
       friendHead,
       root,
       tooltip,
-
+      watchMore,
+      hasMore
     }
   }
 }
@@ -178,8 +208,16 @@ export default {
       white-space: normal;
       word-break: break-all;
       word-wrap: break-word;
+      text-align: left;
     }
   }
+}
+.more {
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+  color: rgb(122, 190, 218);
+  margin: 5px 0;
 }
 .createTime {
   display: inline-block;
@@ -191,6 +229,9 @@ export default {
   line-height: 20px;
   padding: 3px;
   margin: 5px 0;
+}
+.el-avatar > img {
+  image-rendering: -webkit-optimize-contrast;
 }
 .rightArrow {
   width: 0;

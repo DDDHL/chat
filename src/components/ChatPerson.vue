@@ -41,10 +41,8 @@ export default {
   setup() {
     var searchInfo = ref()
     var allUsers = reactive({ data: [] })
-    getFriendsList({ auth: false }).then(res => {
-      //console.log(res.data)
+    getFriendsList({ auth: true }).then(res => {
       allUsers.data = res.data
-      console.log(allUsers)
     })
     return {
       Search, Plus, searchInfo, allUsers
