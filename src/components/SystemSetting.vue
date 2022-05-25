@@ -52,7 +52,9 @@
             </div>
             <div style="margin-top: 40px">
               <el-button type="primary" @click="save">保存修改</el-button>
-              <el-button type="warning" @click="changPwd">修改密码</el-button>
+              <el-button type="warning" @click="dialogVisible = true"
+                >修改密码</el-button
+              >
               <el-button type="danger" @click="logOut">退出登录</el-button>
             </div>
           </div>
@@ -60,6 +62,29 @@
       </el-container>
     </el-container>
   </div>
+  <el-dialog v-model="dialogVisible" title="修改密码" width="350px" center>
+    <div class="changPwd_fa">
+      <div class="changPwd">
+        <div>原密码:</div>
+        <el-input v-model="pwd" placeholder="请输入原密码" type="password" />
+      </div>
+      <div class="changPwd">
+        <div>新密码:</div>
+        <el-input v-model="newPwd" placeholder="请输入新密码" type="password" />
+      </div>
+      <div class="changPwd">
+        <div>重复新密码:</div>
+        <el-input
+          v-model="newPwdAgain"
+          placeholder="确认新密码"
+          type="password"
+        />
+      </div>
+      <div style="margin-top: 20px">
+        <el-button type="primary" @click="changPwd">保存修改</el-button>
+      </div>
+    </div>
+  </el-dialog>
 </template>
 
 <script>
@@ -67,8 +92,9 @@ import { Search, Plus } from '@element-plus/icons'
 import { useStore } from 'vuex'
 import { ElMessage } from 'element-plus'
 import { ref } from '@vue/reactivity'
-import { userLogOut, changeInfo } from '@/api'
+import { userLogOut, changeInfo, changePwd } from '@/api'
 import router from '@/router'
+import { encrypt } from '@/utils/secret'
 export default {
   name: 'SystemSetting',
   components: { Plus },
@@ -82,6 +108,10 @@ export default {
     const name = ref(user.name)
     const SexOptions = [{ value: '男', label: '男' }, { value: '女', label: '女' }]
     const sex = ref(user.sex)
+    const dialogVisible = ref(false)
+    const pwd = ref()
+    const newPwd = ref()
+    const newPwdAgain = ref()
     function handleAvatarSuccess(res) {
       console.log(res)
       if (res.code) {
@@ -149,7 +179,42 @@ export default {
       })
     }
     function changPwd() {
-
+      if (!pwd.value || !newPwd.value || !newPwdAgain) {
+        ElMessage({
+          message: '请填写完整!',
+          center: true,
+          type: 'warning',
+          duration: 1000,
+        })
+        return
+      }
+      if (newPwd.value != newPwdAgain.value) {
+        ElMessage({
+          message: '两次密码不一致!',
+          center: true,
+          type: 'warning',
+          duration: 1000,
+        })
+        return
+      }
+      if (pwd.value == newPwd.value) {
+        ElMessage({
+          message: '新密码不能与原密码相同!',
+          center: true,
+          type: 'warning',
+          duration: 1000,
+        })
+        return
+      }
+      changePwd({ password: encrypt(pwd.value), newPwd: encrypt(newPwd.value) }, { auth: true }).then(res => {
+        ElMessage({
+          message: res.message,
+          center: true,
+          type: 'success',
+          duration: 1000,
+        })
+        dialogVisible.value = false
+      })
     }
     function logOut() {
       userLogOut({ auth: true }).then(res => {
@@ -164,7 +229,7 @@ export default {
       })
     }
     return {
-      Search, uploadIp, handleAvatarSuccess, beforeAvatarUpload, imageUrl, uploadToken, logOut, signature, name, SexOptions, sex, save, changPwd
+      Search, uploadIp, handleAvatarSuccess, beforeAvatarUpload, imageUrl, uploadToken, logOut, signature, name, SexOptions, sex, save, changPwd, dialogVisible, pwd, newPwd, newPwdAgain
     }
   }
 }
@@ -231,5 +296,20 @@ export default {
 .el-upload > img {
   image-rendering: -webkit-optimize-contrast;
   object-fit: cover;
+}
+.changPwd_fa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 180px;
+  justify-content: space-around;
+}
+.changPwd {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  > div:first-child {
+    width: 150px;
+  }
 }
 </style>>

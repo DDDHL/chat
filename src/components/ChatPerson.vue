@@ -6,7 +6,12 @@
         <LeftCenterSearch />
         <!-- 下方好友列表 -->
         <div class="list">
-          <div class="list_item" v-for="item in allUsers.data" :key="item.id">
+          <div
+            class="list_item"
+            v-for="item in allUsers.data"
+            :key="item.id"
+            @click="checkOne(item)"
+          >
             <div class="headImg">
               <el-avatar
                 shape="square"
@@ -26,6 +31,35 @@
         <el-header height="30px"><Top /></el-header>
         <el-main>
           <div></div>
+          <div class="grayLogo" v-show="showLogo">
+            <el-image
+              style="width: 120px; height: 120px; -webkit-user-select: none"
+              :src="grayLogoUrl"
+              fit="fill"
+            />
+          </div>
+          <div v-show="!showLogo" class="info">
+            <div style="margin-top: 30px">
+              <el-image
+                style="width: 100px; height: 100px"
+                :src="userData.data.avatar"
+                fit="cover"
+              />
+            </div>
+            <div class="info_item">
+              {{ userData.data.name }}
+              <span v-if="userData.data.sex == '男'"
+                ><el-icon size="16px" :color="'#46A3FF'"> <Female /> </el-icon
+              ></span>
+              <span v-else>
+                <el-icon size="18px" color="#FF79BC">
+                  <Male />
+                </el-icon>
+              </span>
+            </div>
+            <div class="info_item">{{ userData.data.account }}</div>
+            <div class="info_item">{{ userData.data.signature }}</div>
+          </div>
         </el-main>
       </el-container>
     </el-container>
@@ -33,19 +67,28 @@
 </template>
 
 <script>
-import { Search, Plus } from '@element-plus/icons'
+import grayLogoUrl from '@/assets/img/icon.png'
+import { Search, Plus, Female, Male } from '@element-plus/icons'
 import { reactive, ref } from '@vue/reactivity'
 import { getFriendsList } from '@/api'
 export default {
   name: 'ChatPerson',
+  components: { Female, Male },
   setup() {
     var searchInfo = ref()
     var allUsers = reactive({ data: [] })
+    var showLogo = ref(true)
+    var userData = reactive({ data: {} })
     getFriendsList({ auth: true }).then(res => {
       allUsers.data = res.data
     })
+    function checkOne(item) {
+      userData.data = item
+      console.log(item)
+      showLogo.value = false
+    }
     return {
-      Search, Plus, searchInfo, allUsers
+      Search, Plus, searchInfo, allUsers, grayLogoUrl, checkOne, showLogo, userData
     }
   }
 }
@@ -58,6 +101,14 @@ export default {
 }
 .el-header {
   padding: 0;
+}
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .el-image {
+    image-rendering: -webkit-optimize-contrast;
+  }
 }
 .el-main {
   padding: 0;
@@ -162,4 +213,20 @@ export default {
   background-color: #dcdcdd;
   border-radius: 32px;
 }
-</style>>
+.grayLogo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  margin-top: -51px;
+}
+.info_item {
+  border-bottom: 1px solid #dddddd;
+  line-height: 60px;
+  width: 300px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

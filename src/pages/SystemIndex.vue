@@ -35,7 +35,7 @@ export default {
     width: 100%;
     height: 100%;
     .index_item1 {
-      width: 55px;
+      width: 54px;
     }
     .index_item2 {
       width: calc(100% - 55px);

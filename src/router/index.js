@@ -21,6 +21,10 @@ const routes = [
         ],
       },
       {
+        path: '/friendGroup',
+        component: () => import('@/components/FriendGroup'),
+      },
+      {
         path: '/chatPerson',
         component: () => import('@/components/ChatPerson'),
       },

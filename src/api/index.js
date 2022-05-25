@@ -70,6 +70,16 @@ export const changeInfo = (params, config = {}) => {
   })
 }
 
+// 修改密码
+export const changePwd = (params, config = {}) => {
+  return requests({
+    url: '/changePwd',
+    method: 'POST',
+    data: params,
+    config: config,
+  })
+}
+
 // 退出登录
 export const userLogOut = (config = {}) => {
   return requests({

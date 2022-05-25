@@ -25,7 +25,7 @@
           </el-icon>
           <template #title>好友列表</template>
         </el-menu-item>
-        <el-menu-item index="/chatPerson">
+        <el-menu-item index="/friendGroup">
           <el-icon :size="20">
             <Compass />
           </el-icon>
@@ -80,10 +80,6 @@ export default {
   image-rendering: crisp-edges;
 }
 
-.right {
-  width: 250px;
-  border-right: 1px solid #eee;
-}
 .el-menu--collapse {
   width: 55px;
 }

@@ -55,8 +55,8 @@ import { ElMessage } from 'element-plus'
 import { getRecordBySingle } from "@/api"
 import { handleDate, handleDateSingle } from '@/utils/date'
 export default {
-
-  setup() {
+  emits: ['updateData'],
+  setup(props, context) {
     const store = useStore()
     const inputInfo = ref()
     const root = ref(null)
@@ -133,10 +133,11 @@ export default {
       } else {
         allMsg.data.push(data)
       }
-      console.log(data)
+
       nextTick(() => {
         root.value.scrollTop = root.value.scrollHeight
       })
+      context.emit('updateData', true)
     };
     ws.onclose = function () {
       ElMessage({

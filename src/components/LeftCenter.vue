@@ -75,11 +75,13 @@ export default {
     onMounted(() => {
       getData()
     })
-    function getData() {
+    function getData(flag = false) {
       getFriendsList({ auth: true }).then(res => {
         allUsers.data = res.data
-        if (res.data.length > 0) {
-          store.state.nowPeople = { avatar: res.data[0].avatar, account: res.data[0].account }
+        if (!flag) {
+          if (res.data.length > 0) {
+            store.state.nowPeople = { avatar: res.data[0].avatar, account: res.data[0].account }
+          }
         }
       })
     }
