@@ -2,10 +2,10 @@
   <div class="bg">
     <div class="left">
       <div class="head">
-        <el-avatar :size="36" shape="square" :src="circleUrl" />
+        <el-avatar :size="36" shape="square" :src="avatar" />
       </div>
       <el-menu
-        default-active="2"
+        :default-active="path"
         class="el-menu-vertical-demo"
         :collapse="true"
         background-color="#2e2e2e"
@@ -44,16 +44,32 @@
 
 <script>
 import { ChatDotSquare, UserFilled, Setting, Compass } from '@element-plus/icons'
-
+import { useStore } from 'vuex'
+import { computed, watch } from 'vue'
+import { ref } from '@vue/reactivity'
+import { useRoute } from 'vue-router'
 export default {
   name: 'sysAside',
   components: {
     ChatDotSquare, UserFilled, Setting, Compass
   },
   setup() {
-    var circleUrl = JSON.parse(window.sessionStorage.getItem('user')).avatar
+    var route = useRoute()
+    var store = useStore()
+    var avatar = ref(JSON.parse(window.sessionStorage.getItem('user')).avatar)
+    watch(() => store.state.avatar, (newValue) => {
+      // 更换头像
+      avatar.value = newValue
+    });
+    var path = ref()
+    path = computed(() => {
+      if (route.path == '/chatFrame') {
+        return '/leftCenter'
+      }
+      return route.path
+    })
     return {
-      circleUrl
+      avatar, path
     }
   }
 }
@@ -76,8 +92,7 @@ export default {
   padding-top: 35px;
 }
 :deep(.el-avatar.el-avatar--square > img) {
-  image-rendering: -webkit-optimize-contrast; /* Webkit (non-standard naming) */
-  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 .el-menu--collapse {

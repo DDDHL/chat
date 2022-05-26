@@ -39,7 +39,7 @@
         </el-header>
         <el-main>
           <div class="chatTitle" v-show="!logo">
-            <div @click="checkPeople(peopleName)">{{ peopleName }}</div>
+            <div>{{ peopleName }}</div>
           </div>
           <div class="grayLogo" v-show="logo">
             <el-image
@@ -48,7 +48,7 @@
               fit="fill"
             />
           </div>
-          <router-view v-show="!logo" @updateData="getData"></router-view>
+          <router-view v-if="!logo" @updateData="getData"></router-view>
         </el-main>
       </el-container>
     </el-container>
@@ -61,6 +61,7 @@ import LeftCenterSearch from './LeftCenterSearch.vue'
 import grayLogoUrl from '@/assets/img/icon.png'
 import { useStore } from 'vuex'
 import router from '@/router'
+import { useRoute } from 'vue-router'
 import { getFriendsList } from '@/api'
 import { onMounted } from '@vue/runtime-core'
 import { handleNewRecordTime } from '@/utils/date'
@@ -72,17 +73,16 @@ export default {
     var peopleName = ref()
     var allUsers = reactive({ data: [] })
     const store = useStore()
+    const route = useRoute()
+    if (route.query.account) {
+      changeBg(route.query)
+    }
     onMounted(() => {
       getData()
     })
-    function getData(flag = false) {
+    function getData() {
       getFriendsList({ auth: true }).then(res => {
         allUsers.data = res.data
-        if (!flag) {
-          if (res.data.length > 0) {
-            store.state.nowPeople = { avatar: res.data[0].avatar, account: res.data[0].account }
-          }
-        }
       })
     }
     function changeBg(item) {
@@ -92,16 +92,12 @@ export default {
       router.push('chatFrame')
       logo.value = false
     }
-    function checkPeople(name) {
-      console.log(name)
-    }
     function newRecordTime(time) {
-
       return handleNewRecordTime(time)
     }
     var userListAvatar = JSON.parse(window.sessionStorage.getItem('user')).avatar
     return {
-      userListAvatar, activeItem, allUsers, grayLogoUrl, logo, peopleName, changeBg, checkPeople, getData, newRecordTime
+      userListAvatar, activeItem, allUsers, grayLogoUrl, logo, peopleName, changeBg, getData, newRecordTime
     }
   }
 }

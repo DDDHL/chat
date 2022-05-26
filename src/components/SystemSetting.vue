@@ -113,7 +113,6 @@ export default {
     const newPwd = ref()
     const newPwdAgain = ref()
     function handleAvatarSuccess(res) {
-      console.log(res)
       if (res.code) {
         ElMessage({
           message: res.message,
@@ -121,10 +120,10 @@ export default {
           type: 'error',
           duration: 1000,
         })
-
       } else {
         imageUrl.value = res.data.path
         user.avatar = res.data.path
+        store.state.avatar = res.data.path
         window.sessionStorage.setItem('user', JSON.stringify(user))
         ElMessage({
           message: res.message,

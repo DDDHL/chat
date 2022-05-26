@@ -3,7 +3,7 @@
     <el-container style="height: 100%">
       <el-aside width="250px">
         <!-- 顶部搜索框 -->
-        <LeftCenterSearch />
+        <LeftCenterSearch @updateData="getData" />
         <!-- 下方好友列表 -->
         <div class="list">
           <div
@@ -59,6 +59,11 @@
             </div>
             <div class="info_item">{{ userData.data.account }}</div>
             <div class="info_item">{{ userData.data.signature }}</div>
+            <div style="margin-top: 20px">
+              <el-button type="success" plain @click="sendMsg(userData.data)"
+                >发送消息</el-button
+              >
+            </div>
           </div>
         </el-main>
       </el-container>
@@ -71,6 +76,8 @@ import grayLogoUrl from '@/assets/img/icon.png'
 import { Search, Plus, Female, Male } from '@element-plus/icons'
 import { reactive, ref } from '@vue/reactivity'
 import { getFriendsList } from '@/api'
+import router from '@/router'
+import { onMounted } from '@vue/runtime-core'
 export default {
   name: 'ChatPerson',
   components: { Female, Male },
@@ -79,16 +86,23 @@ export default {
     var allUsers = reactive({ data: [] })
     var showLogo = ref(true)
     var userData = reactive({ data: {} })
-    getFriendsList({ auth: true }).then(res => {
-      allUsers.data = res.data
+    onMounted(() => {
+      getData()
     })
+    function getData() {
+      getFriendsList({ auth: true }).then(res => {
+        allUsers.data = res.data
+      })
+    }
     function checkOne(item) {
       userData.data = item
-      console.log(item)
       showLogo.value = false
     }
+    function sendMsg(info) {
+      router.push({ path: '/leftCenter', query: info })
+    }
     return {
-      Search, Plus, searchInfo, allUsers, grayLogoUrl, checkOne, showLogo, userData
+      Search, Plus, searchInfo, allUsers, grayLogoUrl, checkOne, showLogo, userData, sendMsg, getData
     }
   }
 }

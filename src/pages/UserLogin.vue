@@ -77,7 +77,6 @@ export default {
     var password = ref()
     var turnBox = ref()
     var turnBox2 = ref()
-
     // 登录
     function login() {
       if (!account.value) {

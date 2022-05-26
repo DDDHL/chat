@@ -50,7 +50,7 @@
 
 <script>
 import { useStore } from 'vuex'
-import { nextTick, reactive, ref, watch } from 'vue'
+import { nextTick, watch, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getRecordBySingle } from "@/api"
 import { handleDate, handleDateSingle } from '@/utils/date'
@@ -78,7 +78,6 @@ export default {
       // 更改用户重新获取聊天记录
       hasMore.value = true
       friendHead.value = newValue.avatar
-      store.state.nowPeople = newValue
       allMsg.data = []
       getData(pageSize.value)
     }, { immediate: true });
@@ -137,7 +136,7 @@ export default {
       nextTick(() => {
         root.value.scrollTop = root.value.scrollHeight
       })
-      context.emit('updateData', true)
+      context.emit('updateData')
     };
     ws.onclose = function () {
       ElMessage({

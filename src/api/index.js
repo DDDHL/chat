@@ -50,7 +50,32 @@ export const addNewFriend = (params, config = {}) => {
     config: config,
   })
 }
-
+// 删除已上传动态
+export const deleteImg = (params, config = {}) => {
+  return requests({
+    url: '/deleteImg',
+    method: 'POST',
+    data: params,
+    config: config,
+  })
+}
+// 发布动态
+export const publishSingle = (params, config = {}) => {
+  return requests({
+    url: '/publishSingle',
+    method: 'POST',
+    data: params,
+    config: config,
+  })
+}
+// 查询好友动态
+export const checkGroup = (config = {}) => {
+  return requests({
+    url: '/checkGroup',
+    method: 'POST',
+    config: config,
+  })
+}
 // 获取单人聊天记录
 export const getRecordBySingle = (params, config = {}) => {
   return requests({
