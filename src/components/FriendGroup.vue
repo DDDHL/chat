@@ -6,40 +6,42 @@
         <div class="title">微社区</div>
       </el-header>
       <el-main>
-        <el-image style="width: 100%; height: 30%" :src="imgBg" fit="cover" />
-        <div class="contain">
-          <div class="headImg">
-            <el-avatar :size="80" :src="head" />
-          </div>
-          <div class="topText">
-            <div class="signature">
-              {{ signature }}
+        <div class="allFa" ref="dataItem">
+          <el-image style="width: 100%; height: 30%" :src="imgBg" fit="cover" />
+          <div class="contain">
+            <div class="headImg">
+              <el-avatar :size="80" :src="head" />
             </div>
-            <div>{{ name }}</div>
-          </div>
-          <div class="info" v-for="item in allData.data" :key="item.id">
-            <div class="info_item">
-              <el-avatar :size="40" :src="item.avatar" shape="square" />
-            </div>
-            <div class="text">
-              <div>{{ item.name }}</div>
-              <div>{{ item.info }}</div>
-              <div style="margin-top: 5px" v-if="true">
-                <el-image
-                  style="width: 290px; height: 290px"
-                  :src="item.imgPath"
-                  fit="cover"
-                />
+            <div class="topText">
+              <div class="signature">
+                {{ signature }}
               </div>
-              <div class="time">{{ item.createTime }}</div>
+              <div>{{ name }}</div>
+            </div>
+            <div class="info" v-for="item in allData.data" :key="item.id">
+              <div class="info_item">
+                <el-avatar :size="40" :src="item.avatar" shape="square" />
+              </div>
+              <div class="text">
+                <div>{{ item.name }}</div>
+                <div>{{ item.info }}</div>
+                <div style="margin-top: 5px" v-if="item.imgPath">
+                  <el-image
+                    style="width: 290px; height: 290px"
+                    :src="item.imgPath"
+                    fit="cover"
+                  />
+                </div>
+                <div class="time">{{ item.createTime }}</div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="flash" @click="flash">
-          <Refresh />
-        </div>
-        <div class="publish" @click="dialogVisible = true">
-          <Plus />
+          <div class="flash" @click="flash">
+            <Refresh />
+          </div>
+          <div class="publish" @click="dialogVisible = true">
+            <Plus />
+          </div>
         </div>
       </el-main>
     </el-container>
@@ -95,6 +97,9 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useStore } from 'vuex'
 import { deleteImg, publishSingle, checkGroup } from '@/api'
 import { onMounted } from '@vue/runtime-core'
+import { handleNewRecordTime } from '@/utils/date'
+import { nextTick } from 'vue'
+import { ElLoading } from 'element-plus'
 export default {
   name: 'FriendGroup',
   components: { Refresh, Plus },
@@ -109,14 +114,25 @@ export default {
     const imageUrl = ref()
     var allData = reactive({ data: [] })
     var info = ref()
+    const dataItem = ref(null)
     function flash() {
       getData()
+      const loadingInstance = ElLoading.service({ fullscreen: true })
+      nextTick(() => {
+        dataItem.value.scrollTop = 0
+        setTimeout(() => {
+          loadingInstance.close()
+        }, 500)
+      })
     }
     onMounted(() => {
       getData()
     })
     function getData() {
       checkGroup({ auth: true }).then(res => {
+        res.data.forEach(data => {
+          data.createTime = handleNewRecordTime(data.createTime)
+        })
         allData.data = res.data
       })
     }
@@ -202,7 +218,7 @@ export default {
       return result
     }
     return {
-      imgBg, head, signature, name, flash, publish, dialogVisible, uploadToken, beforeAvatarUpload, handleAvatarSuccess, uploadIp, imageUrl, cancelPublish, delectImg, info, allData
+      imgBg, head, signature, name, flash, publish, dialogVisible, uploadToken, beforeAvatarUpload, handleAvatarSuccess, uploadIp, imageUrl, cancelPublish, delectImg, info, allData, dataItem
     }
   }
 }
@@ -250,7 +266,7 @@ export default {
 }
 .info {
   display: flex;
-  margin-top: 50px;
+  margin-top: 20px;
   .info_item {
     margin-left: 20px;
   }
@@ -268,7 +284,7 @@ export default {
     > div:last-child {
       color: #9e9e9e;
       font-size: 14px;
-      margin-top: 5px;
+      margin: 10px 0;
     }
   }
 }
@@ -361,17 +377,22 @@ export default {
 :deep(.el-avatar > img) {
   image-rendering: -webkit-optimize-contrast;
 }
+.allFa {
+  width: 100%;
+  height: 100%;
+  overflow-y: overlay;
+}
 /* 整个滚动条 */
-::-webkit-scrollbar {
+.allFa::-webkit-scrollbar {
   width: 7px;
 }
 /* 滚动条上的滚动滑块 */
-::-webkit-scrollbar-thumb {
+.allFa::-webkit-scrollbar-thumb {
   background-color: #adacaa;
   border-radius: 32px;
 }
 /* 滚动条轨道 */
-::-webkit-scrollbar-track {
+.allFa::-webkit-scrollbar-track {
   background-color: #dcdcdd;
   border-radius: 32px;
 }
