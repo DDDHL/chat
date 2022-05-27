@@ -3,10 +3,15 @@ var dayjs = require('dayjs')
 var nowYear = dayjs().format('YYYY')
 var nowDateY = dayjs().format('MM-DD')
 function compare(hisDate, nowDate) {
+  var flag = false
   if (nowYear == nowDate.split('-')[0]) {
     let date = nowDate.split(' ')[0].split('-')
     let time = nowDate.split(' ')[1]
     nowDate = date[1] + '-' + date[2] + ' ' + time
+    flag = true
+  }
+  if (flag) {
+    if (hisDate == nowDate.split(' ')[1]) return ''
   }
   if (hisDate == nowDate) return ''
   // 判断日期与今天是否相同
@@ -18,6 +23,7 @@ function compare(hisDate, nowDate) {
   if (nowDateY == date) {
     return nowDate.split(' ')[1]
   }
+
   return nowDate
 }
 

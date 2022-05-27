@@ -90,7 +90,6 @@
 
 <script>
 import imgBg from '@/assets/img/bg.jpg'
-import head from '@/assets/img/head.jpg'
 import { reactive, ref } from '@vue/reactivity'
 import { Refresh, Plus } from '@element-plus/icons'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -114,6 +113,7 @@ export default {
     const imageUrl = ref()
     var allData = reactive({ data: [] })
     var info = ref()
+    var head = ref(user.avatar)
     const dataItem = ref(null)
     function flash() {
       getData()
@@ -133,7 +133,7 @@ export default {
         res.data.forEach(data => {
           data.createTime = handleNewRecordTime(data.createTime)
         })
-        allData.data = res.data
+        allData.data = res.data.reverse()
       })
     }
     function publish() {
@@ -152,6 +152,7 @@ export default {
         dialogVisible.value = false
         imageUrl.value = ''
         info.value = ''
+        getData()
       })
     }
     function cancelPublish(done) {
