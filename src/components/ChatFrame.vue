@@ -127,11 +127,8 @@ export default {
     ws.onmessage = function (e) {
       // 接收服务端信息
       let data = JSON.parse(e.data)
-      if (allMsg.data.length > 0) {
-        allMsg.data.push(handleDateSingle(allMsg.data[allMsg.data.length - 1], data))
-      } else {
-        allMsg.data.push(data)
-      }
+
+      allMsg.data.push(handleDateSingle(allMsg.data, data))
 
       nextTick(() => {
         root.value.scrollTop = root.value.scrollHeight

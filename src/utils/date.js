@@ -30,6 +30,9 @@ export const handleDate = (data) => {
         let date = data[i].createTime.split(' ')[0].split('-')
         let time = data[i].createTime.split(' ')[1]
         data[i].createTime = date[1] + '-' + date[2] + ' ' + time
+        if (data[i].createTime.split(' ')[0] == nowDateY) {
+          data[i].createTime = data[i].createTime.split(' ')[1]
+        }
       }
       continue
     }
@@ -39,13 +42,40 @@ export const handleDate = (data) => {
 }
 
 // 处理收到的某条
-export const handleDateSingle = (last, now) => {
+export const handleDateSingle = (last = [], now) => {
+  var lastTime = ''
+  if (last.length != 0) {
+    if (last[last.length - 1].createTime == '') {
+      for (let i = last.length - 1; i > 0; i--) {
+        if (last[i].createTime != '') {
+          lastTime = last[i].createTime
+          break
+        }
+      }
+    } else {
+      lastTime = last[last.length - 1].createTime
+    }
+  }
   if (nowYear == now.createTime.split('-')[0]) {
     let date = now.createTime.split(' ')[0].split('-')
     let time = now.createTime.split(' ')[1]
     now.createTime = date[1] + '-' + date[2] + ' ' + time
-    if (now.createTime == last.createTime) {
-      now.createTime = ''
+    if (lastTime != '') {
+      if (lastTime.split(' ').length == 1) {
+        if (now.createTime.split(' ')[1] == lastTime.split(' ')[0]) {
+          now.createTime = ''
+        } else {
+          now.createTime = now.createTime.split(' ')[1]
+        }
+      } else {
+        if (now.createTime == lastTime) {
+          now.createTime = ''
+        } else {
+          if (now.createTime.split(' ')[0] == nowDateY) {
+            now.createTime = now.createTime.split(' ')[1]
+          }
+        }
+      }
     }
   }
   return now
